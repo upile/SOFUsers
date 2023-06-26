@@ -49,7 +49,10 @@ const StackOverFlowUsersView = () => {
       console.log('StackOverflow State',stackOverflowUsersState)
 
       let stackOverFlowUsers = getStackOverFlowUsers(stackOverflowUsersState) as Item[]
+      
       const [data, setState] = useState(stackOverFlowUsers);
+      
+      console.log('data',data)
       
       const followUser = (user_id: number) => {
         const updatedStackOverFlowUsers = data.map(user => {
@@ -93,9 +96,23 @@ const StackOverFlowUsersView = () => {
           setState(updatedStackOverFlowUsers);
       };
 
+      const unBlock = (user_id: number) => {
+        const updatedStackOverFlowUsers = data.map(user => {
+            if (user.user_id === user_id) {
+              return {
+                ...user,
+                blocked: true
+              };
+            }
+            return user;
+          });
+          stackOverFlowUsers = Object.assign([], updatedStackOverFlowUsers);
+          setState(updatedStackOverFlowUsers);
+      };
+
       return (
         <div>
-        { stackOverFlowUsers.map(({display_name, user_id, profile_image, reputation, followed, blocked}) => {
+        { data.map(({display_name, user_id, profile_image, reputation, followed, blocked}) => {
         return (
           <div className='card' key={user_id}>
             <div className={followed ? 'followed': ''}>
@@ -116,9 +133,16 @@ const StackOverFlowUsersView = () => {
                 Unfollow
               </button>
             )}
+
+            {!blocked ? (
               <button className="block-btn" onClick={() => blockUser(user_id)}>
                 Block
+            </button>
+            ) : (
+            <button className="block-btn" onClick={() => unBlock(user_id)}>
+                Unblock
               </button>
+            )}
             </Section>
             </div>
           </div>
